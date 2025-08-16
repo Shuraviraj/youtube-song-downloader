@@ -1,129 +1,213 @@
-<!-- YouTube MP3 Downloader Main Interface -->
-<div class="container">
-    <!-- Header Section -->
-    <header class="header">
-        <h1>🎵 YouTube MP3 Downloader</h1>
-        <p class="subtitle">Convert YouTube videos to high-quality MP3 files instantly</p>
-    </header>
+<!-- Enhanced YouTube MP3 Downloader UI -->
+<div class="downloader-container">
+  <!-- Background Effects -->
+  <div class="background-gradient"></div>
+  <div class="floating-particles">
+    <div class="particle" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]"></div>
+  </div>
 
-    <!-- Download Form Section -->
-    <section class="form-section">
-        <div class="form-container">
-            <form [formGroup]="downloadForm" (ngSubmit)="onSubmit()" class="download-form">
-
-                <!-- URL Input Field -->
-                <div class="form-group">
-                    <label for="url" class="form-label">
-                        <span class="label-text">YouTube URL</span>
-                        <span class="label-hint">Paste your YouTube link here</span>
-                    </label>
-
-                    <div class="input-wrapper">
-                        <input type="text" id="url" formControlName="url"
-                            placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="url-input"
-                            [class.invalid]="isFieldInvalid('url')"
-                            [class.valid]="downloadForm.get('url')?.valid && downloadForm.get('url')?.touched">
-
-                        <!-- Clear button -->
-                        <button type="button" class="clear-btn" *ngIf="downloadForm.get('url')?.value"
-                            (click)="downloadForm.get('url')?.setValue('')" title="Clear URL">
-                            ✕
-                        </button>
-                    </div>
-
-                    <!-- Field Error Messages -->
-                    <div class="error-message" *ngIf="isFieldInvalid('url')">
-                        {{ getFieldError('url') }}
-                    </div>
-                </div>
-
-                <!-- Download Button -->
-                <button type="submit" class="download-btn" [disabled]="downloadForm.invalid || isLoading"
-                    [class.loading]="isLoading">
-                    <span class="btn-content" *ngIf="!isLoading">
-                        <span class="btn-icon">📥</span>
-                        <span class="btn-text">Download MP3</span>
-                    </span>
-
-                    <span class="btn-content loading-content" *ngIf="isLoading">
-                        <span class="spinner"></span>
-                        <span class="btn-text">{{ downloadProgress || 'Processing...' }}</span>
-                    </span>
-                </button>
-            </form>
+  <!-- Main Card -->
+  <div class="download-card" [class.pulse]="pulseAnimation">
+    <!-- Header -->
+    <div class="card-header">
+      <div class="header-icon">
+        <div class="music-icon">
+          <div class="note note-1">♪</div>
+          <div class="note note-2">♫</div>
+          <div class="note note-3">♪</div>
         </div>
-    </section>
+      </div>
+      <h1 class="title">
+        <span class="gradient-text">YouTube</span> 
+        <span class="highlight">MP3</span> 
+        <span class="gradient-text">Downloader</span>
+      </h1>
+      <p class="subtitle">Transform any YouTube video into high-quality MP3 audio</p>
+    </div>
 
-    <!-- Status Messages -->
-    <section class="messages-section">
+    <!-- Download Form -->
+    <form [formGroup]="downloadForm" (ngSubmit)="onSubmit()" class="download-form">
+      <div class="input-group">
+        <div class="input-wrapper" [class.error]="isFieldInvalid('url')">
+          <div class="input-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+            </svg>
+          </div>
+          <input
+            type="url"
+            formControlName="url"
+            placeholder="Paste YouTube URL here (e.g., https://youtu.be/...)"
+            class="url-input"
+            [class.error]="isFieldInvalid('url')"
+          />
+          <div class="input-border"></div>
+        </div>
+        
         <!-- Error Message -->
-        <div class="alert alert-error" *ngIf="error" role="alert">
-            <div class="alert-content">
-                <span class="alert-icon">⚠️</span>
-                <span class="alert-text">{{ error }}</span>
-                <button class="alert-close" (click)="clearError()" title="Close">✕</button>
+        <div class="error-message" *ngIf="isFieldInvalid('url')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          {{ getFieldError('url') }}
+        </div>
+      </div>
+
+      <!-- Download Button -->
+      <button
+        type="submit"
+        class="download-btn"
+        [disabled]="isLoading"
+        [class.loading]="isLoading"
+        [class.success]="success"
+      >
+        <div class="btn-content">
+          <div class="btn-icon" *ngIf="!isLoading && !success">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+          </div>
+          
+          <div class="loading-spinner" *ngIf="isLoading">
+            <div class="spinner"></div>
+          </div>
+          
+          <div class="success-icon" *ngIf="success">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+          </div>
+          
+          <span class="btn-text">
+            {{ isLoading ? 'Processing...' : success ? 'Download Complete!' : 'Download MP3' }}
+          </span>
+        </div>
+        
+        <!-- Button Ripple Effect -->
+        <div class="btn-ripple"></div>
+      </button>
+    </form>
+
+    <!-- Progress Section -->
+    <div class="progress-section" *ngIf="isLoading || success">
+      <!-- Video Info Card -->
+      <div class="video-info" *ngIf="videoTitle">
+        <div class="video-thumbnail">
+          <img [src]="videoThumbnail" [alt]="videoTitle" />
+          <div class="play-overlay">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="video-details">
+          <h3 class="video-title">{{ videoTitle }}</h3>
+          <p class="video-duration">Duration: {{ videoDuration }}</p>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-container">
+        <div class="progress-header">
+          <span class="progress-label">{{ downloadProgress }}</span>
+          <span class="progress-percentage">{{ progressPercentage | number:'1.0-0' }}%</span>
+        </div>
+        
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar">
+            <div 
+              class="progress-fill" 
+              [style.width.%]="progressPercentage"
+              [style.background-color]="getProgressColor()"
+            >
+              <div class="progress-shine"></div>
             </div>
+          </div>
+          
+          <!-- Phase Indicators -->
+          <div class="phase-indicators">
+            <div 
+              class="phase-dot"
+              *ngFor="let phase of ['connecting', 'fetching', 'downloading', 'converting']; let i = index"
+              [class.active]="progressPercentage > (i + 1) * 25"
+              [class.current]="downloadPhase === phase"
+            ></div>
+          </div>
         </div>
 
-        <!-- Success Message -->
-        <div class="alert alert-success" *ngIf="success" role="alert">
-            <div class="alert-content">
-                <span class="alert-icon">✅</span>
-                <span class="alert-text">Download completed successfully! Check your downloads folder.</span>
-            </div>
+        <!-- Download Stats -->
+        <div class="download-stats" *ngIf="downloadSpeed && timeRemaining">
+          <div class="stat">
+            <span class="stat-icon">⚡</span>
+            <span class="stat-value">{{ downloadSpeed }}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-icon">⏱️</span>
+            <span class="stat-value">{{ timeRemaining }} remaining</span>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
 
-    <!-- Instructions Section -->
-    <section class="instructions-section">
-        <div class="instructions-card">
-            <h2 class="instructions-title">📋 How to Use</h2>
-
-            <ol class="instructions-list">
-                <li class="instruction-item">
-                    <span class="step-number">1</span>
-                    <div class="step-content">
-                        <strong>Find your video</strong> - Go to YouTube and find the video you want to convert
-                    </div>
-                </li>
-
-                <li class="instruction-item">
-                    <span class="step-number">2</span>
-                    <div class="step-content">
-                        <strong>Copy the URL</strong> - Copy the YouTube video URL from your browser
-                    </div>
-                </li>
-
-                <li class="instruction-item">
-                    <span class="step-number">3</span>
-                    <div class="step-content">
-                        <strong>Paste here</strong> - Paste the URL in the input field above
-                    </div>
-                </li>
-
-                <li class="instruction-item">
-                    <span class="step-number">4</span>
-                    <div class="step-content">
-                        <strong>Download</strong> - Click "Download MP3" and wait for processing
-                    </div>
-                </li>
-            </ol>
-
-            <!-- Important Notes -->
-            <div class="notes-section">
-                <h3 class="notes-title">⚠️ Important Notes</h3>
-                <ul class="notes-list">
-                    <li><strong>Educational Purpose:</strong> This tool is for educational and personal use only</li>
-                    <li><strong>Copyright:</strong> Please respect YouTube's Terms of Service and copyright laws</li>
-                    <li><strong>Quality:</strong> Downloads are converted to 320kbps MP3 for high quality</li>
-                    <li><strong>Privacy:</strong> Files are processed temporarily and automatically deleted</li>
-                </ul>
-            </div>
+    <!-- Success Message -->
+    <div class="success-banner" *ngIf="success">
+      <div class="success-content">
+        <div class="success-icon-large">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
         </div>
-    </section>
+        <div class="success-text">
+          <h3>Download Successful! 🎉</h3>
+          <p>Your MP3 file should start downloading automatically</p>
+        </div>
+      </div>
+    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>Made with ❤️ for educational purposes • Respect copyrights and ToS</p>
-    </footer>
+    <!-- Error Message -->
+    <div class="error-banner" *ngIf="error">
+      <div class="error-content">
+        <div class="error-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+        </div>
+        <div class="error-text">
+          <p>{{ error }}</p>
+        </div>
+        <div class="error-actions">
+          <button class="retry-btn" (click)="retryDownload()">Try Again</button>
+          <button class="dismiss-btn" (click)="clearError()">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confetti Animation -->
+  <div class="confetti-container" *ngIf="showConfetti">
+    <div class="confetti" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"></div>
+  </div>
+
+  <!-- Tips Section -->
+  <div class="tips-section">
+    <h3>💡 Tips for Best Results</h3>
+    <div class="tips-grid">
+      <div class="tip">
+        <span class="tip-icon">🎵</span>
+        <span class="tip-text">Use music videos for best audio quality</span>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">🔗</span>
+        <span class="tip-text">Works with any public YouTube video</span>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">📱</span>
+        <span class="tip-text">Copy URLs from YouTube mobile app</span>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">⚡</span>
+        <span class="tip-text">320kbps high-quality MP3 output</span>
+      </div>
+    </div>
+  </div>
 </div>
