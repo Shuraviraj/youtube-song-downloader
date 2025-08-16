@@ -1,0 +1,129 @@
+<!-- YouTube MP3 Downloader Main Interface -->
+<div class="container">
+    <!-- Header Section -->
+    <header class="header">
+        <h1>🎵 YouTube MP3 Downloader</h1>
+        <p class="subtitle">Convert YouTube videos to high-quality MP3 files instantly</p>
+    </header>
+
+    <!-- Download Form Section -->
+    <section class="form-section">
+        <div class="form-container">
+            <form [formGroup]="downloadForm" (ngSubmit)="onSubmit()" class="download-form">
+
+                <!-- URL Input Field -->
+                <div class="form-group">
+                    <label for="url" class="form-label">
+                        <span class="label-text">YouTube URL</span>
+                        <span class="label-hint">Paste your YouTube link here</span>
+                    </label>
+
+                    <div class="input-wrapper">
+                        <input type="text" id="url" formControlName="url"
+                            placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="url-input"
+                            [class.invalid]="isFieldInvalid('url')"
+                            [class.valid]="downloadForm.get('url')?.valid && downloadForm.get('url')?.touched">
+
+                        <!-- Clear button -->
+                        <button type="button" class="clear-btn" *ngIf="downloadForm.get('url')?.value"
+                            (click)="downloadForm.get('url')?.setValue('')" title="Clear URL">
+                            ✕
+                        </button>
+                    </div>
+
+                    <!-- Field Error Messages -->
+                    <div class="error-message" *ngIf="isFieldInvalid('url')">
+                        {{ getFieldError('url') }}
+                    </div>
+                </div>
+
+                <!-- Download Button -->
+                <button type="submit" class="download-btn" [disabled]="downloadForm.invalid || isLoading"
+                    [class.loading]="isLoading">
+                    <span class="btn-content" *ngIf="!isLoading">
+                        <span class="btn-icon">📥</span>
+                        <span class="btn-text">Download MP3</span>
+                    </span>
+
+                    <span class="btn-content loading-content" *ngIf="isLoading">
+                        <span class="spinner"></span>
+                        <span class="btn-text">{{ downloadProgress || 'Processing...' }}</span>
+                    </span>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Status Messages -->
+    <section class="messages-section">
+        <!-- Error Message -->
+        <div class="alert alert-error" *ngIf="error" role="alert">
+            <div class="alert-content">
+                <span class="alert-icon">⚠️</span>
+                <span class="alert-text">{{ error }}</span>
+                <button class="alert-close" (click)="clearError()" title="Close">✕</button>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div class="alert alert-success" *ngIf="success" role="alert">
+            <div class="alert-content">
+                <span class="alert-icon">✅</span>
+                <span class="alert-text">Download completed successfully! Check your downloads folder.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instructions Section -->
+    <section class="instructions-section">
+        <div class="instructions-card">
+            <h2 class="instructions-title">📋 How to Use</h2>
+
+            <ol class="instructions-list">
+                <li class="instruction-item">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Find your video</strong> - Go to YouTube and find the video you want to convert
+                    </div>
+                </li>
+
+                <li class="instruction-item">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Copy the URL</strong> - Copy the YouTube video URL from your browser
+                    </div>
+                </li>
+
+                <li class="instruction-item">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Paste here</strong> - Paste the URL in the input field above
+                    </div>
+                </li>
+
+                <li class="instruction-item">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Download</strong> - Click "Download MP3" and wait for processing
+                    </div>
+                </li>
+            </ol>
+
+            <!-- Important Notes -->
+            <div class="notes-section">
+                <h3 class="notes-title">⚠️ Important Notes</h3>
+                <ul class="notes-list">
+                    <li><strong>Educational Purpose:</strong> This tool is for educational and personal use only</li>
+                    <li><strong>Copyright:</strong> Please respect YouTube's Terms of Service and copyright laws</li>
+                    <li><strong>Quality:</strong> Downloads are converted to 320kbps MP3 for high quality</li>
+                    <li><strong>Privacy:</strong> Files are processed temporarily and automatically deleted</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Made with ❤️ for educational purposes • Respect copyrights and ToS</p>
+    </footer>
+</div>
